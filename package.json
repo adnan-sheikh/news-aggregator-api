@@ -1,0 +1,31 @@
+{
+  "name": "news-aggregator-api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "a RESTful API that allows users to fetch news articles from multiple sources based on their preferences",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adnan-sheikh/news-aggregator-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adnan-sheikh/news-aggregator-api/issues"
+  },
+  "homepage": "https://github.com/adnan-sheikh/news-aggregator-api#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
