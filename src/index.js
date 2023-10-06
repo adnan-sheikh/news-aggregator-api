@@ -1,11 +1,17 @@
-import express from "express";
 import "dotenv/config";
+import express from "express";
+import { registerUser } from "./handler/user.js";
+import { db } from "./db/index.js";
 
 const PORT = process.env.PORT;
 const app = express();
 
-app.get("/", (_, res) => {
-  return res.send("Welcome to the News Aggregator!");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post("/register", registerUser);
+app.get("/users", (req, res) => {
+  return res.json(Object.values(db.users));
 });
 
 app.listen(PORT, (err) => {
