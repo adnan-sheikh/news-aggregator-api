@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express from "express";
-import { registerUser } from "./handler/user.js";
+import { loginUser, registerUser } from "./handler/user.js";
 import { db } from "./db/index.js";
 
 const PORT = process.env.PORT;
@@ -10,8 +10,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/register", registerUser);
+app.post("/login", loginUser);
 app.get("/users", (req, res) => {
-  return res.json(Object.values(db.users));
+  return res.json(
+    Object.values(db.users).map((user) => {
+      const { password, ...rest } = user;
+      return rest;
+    })
+  );
 });
 
 app.listen(PORT, (err) => {

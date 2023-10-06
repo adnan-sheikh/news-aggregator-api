@@ -1,4 +1,6 @@
+import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 import config from "../config/index.js";
 
 export function createToken(user) {
@@ -10,4 +12,12 @@ export function createToken(user) {
 export function verifyToken(token) {
   const user = jwt.verify(token, config.secrets.jwt);
   return user;
+}
+
+export function hashPassword(password) {
+  return bcrypt.hashSync(password, 5);
+}
+
+export function isPasswordCorrect(password, hashedPassword) {
+  return bcrypt.compareSync(password, hashedPassword);
 }
