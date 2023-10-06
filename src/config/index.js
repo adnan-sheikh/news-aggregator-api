@@ -1,9 +1,11 @@
 const config = {
   port: process.env.PORT,
-  newsApiURL: process.env.NEWS_API_URL,
+  newsAPI: {
+    url: process.env.NEWS_API_URL,
+    key: process.env.NEWS_API_KEY,
+  },
   secrets: {
     jwt: process.env.JWT_AUTH_KEY,
-    newsAPIKey: process.env.NEWS_API_KEY,
   },
 };
 
