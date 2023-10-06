@@ -14,6 +14,20 @@ export function verifyToken(token) {
   return user;
 }
 
+export function protectRoute(req, res, next) {
+  const token = req.body.token;
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized access!" });
+  }
+  try {
+    const user = verifyToken(token);
+    req.user = user;
+    next();
+  } catch (e) {
+    return res.status(401).json({ error: "Invalid token!" });
+  }
+}
+
 export function hashPassword(password) {
   return bcrypt.hashSync(password, 5);
 }
