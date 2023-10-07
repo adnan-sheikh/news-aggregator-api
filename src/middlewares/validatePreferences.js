@@ -7,9 +7,9 @@ export function validatePreferences(req, res, next) {
   const category = preferences?.category;
   const country = preferences?.country;
   const errors = [];
-  if (isEmpty(query)) {
-    errors.push({ error: "query cannot be empty" });
-  }
+  // if (isEmpty(query)) {
+  //   errors.push({ error: "query cannot be empty" });
+  // }
   if (category && !NEWS_CATEGORIES.includes(category)) {
     errors.push({
       error: "This category is not supported. Please choose a valid category",
@@ -25,6 +25,6 @@ export function validatePreferences(req, res, next) {
   if (errors.length !== 0) {
     return res.status(400).json(errors);
   }
-  req.body = { query, category, country };
+  req.body = { q: query, category, country };
   next();
 }

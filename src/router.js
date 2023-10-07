@@ -5,12 +5,15 @@ import {
 } from "./handler/preferences.js";
 import { validatePreferences } from "./middlewares/validatePreferences.js";
 import { db } from "./db/index.js";
+import { getNews } from "./handler/news.js";
 
 export const router = express.Router();
 
 router.post("/preferences", validatePreferences, createOrUpdatePreferences);
 router.get("/preferences", getPreferences);
 router.put("/preferences", validatePreferences, createOrUpdatePreferences);
+
+router.get("/news", getNews);
 
 router.get("/users", (req, res) => {
   // @ts-ignore
