@@ -27,7 +27,7 @@ export function protectRoute(req, res, next) {
   try {
     const user = verifyToken(token);
     if (typeof user !== "string" && !db.users[user.username]) {
-      throw new Error("You are trying to spoof in. Better luck next time!");
+      throw new Error("No such user found!");
     }
     req.user = user;
     next();
