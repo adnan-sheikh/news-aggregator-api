@@ -9,7 +9,7 @@ function checkIfKeyExpired({ key, maxTTL }) {
 export function getFromCache({ key, maxTTL }) {
   return new Promise((res, rej) => {
     if (cache.has(key)) {
-      const isKeyExpired = checkIfKeyExpired({ key, maxTTL });
+      const isKeyExpired = maxTTL ? checkIfKeyExpired({ key, maxTTL }) : false;
       if (isKeyExpired) {
         return rej(new Error("Key has expired!"));
       }
