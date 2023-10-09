@@ -10,7 +10,7 @@ function checkIfKeyExpired({ key, maxTTL }) {
  *
  * Max TTL is not necessary. When provided, only then expiry is checked
  */
-export function getFromCache({ key, maxTTL }) {
+export function getFromCache({ key, maxTTL = null }) {
   return new Promise((res, rej) => {
     if (cache.has(key)) {
       const isKeyExpired = maxTTL ? checkIfKeyExpired({ key, maxTTL }) : false;

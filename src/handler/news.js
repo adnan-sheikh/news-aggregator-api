@@ -30,11 +30,9 @@ export async function getNews(req, res) {
         })
         .catch((error) => {
           console.error(error);
-          res
-            .status(500)
-            .json({
-              error: "There's an error on our server while fetching news!",
-            });
+          res.status(500).json({
+            error: "There's an error on our server while fetching news!",
+          });
         });
     }
   }
