@@ -1,46 +1,54 @@
-import { COUNTRIES, NEWS_CATEGORIES } from "../const/index.js";
+import { COUNTRIES, LANGUAGE } from "../const/index.js";
 import { isEmpty } from "../utils/isEmpty.js";
-
-export function validatePreferences_deprecated(req, res, next) {
-  const preferences = req.body;
-  const query = preferences?.query;
-  const category = preferences?.category;
-  const country = preferences?.country;
-  const errors = [];
-  // if (isEmpty(query)) {
-  //   errors.push({ error: "query cannot be empty" });
-  // }
-  if (category && !NEWS_CATEGORIES.includes(category)) {
-    errors.push({
-      error: "This category is not supported. Please choose a valid category",
-    });
-  }
-  if (isEmpty(country)) {
-    errors.push({ error: "country cannot be empty" });
-  } else if (!COUNTRIES.includes(country)) {
-    errors.push({
-      error: "Please choose a valid country!",
-    });
-  }
-  if (errors.length !== 0) {
-    return res.status(400).json(errors);
-  }
-  req.body = { q: query, category, country };
-  next();
-}
 
 export function validatePreferences(req, res, next) {
   const preferences = req.body;
-  const country = preferences?.country;
+  const countries = preferences?.["source-countries"];
   const language = preferences?.language;
-  const author = preferences?.author;
-  const sources = preferences?.sources;
+  const authors = preferences?.authors;
+
+  const errors = [];
+
+  if (isEmpty(countries)) {
+    errors.push({
+      location: "source-countries",
+      message:
+        "Atleast 1 country is required! Provide comma-separated countries following ISO 3166",
+    });
+  } else {
+    const countriesArr = countries.split(",").map((country) => country.trim());
+    countriesArr.forEach((country) => {
+      if (!COUNTRIES.includes(country)) {
+        errors.push({
+          location: "source-countries",
+          message: `<i>${country}</i> country code is not identified as per ISO 3166`,
+        });
+      }
+    });
+  }
+
+  if (isEmpty(language)) {
+    errors.push({
+      location: "language",
+      message: "Language is required, following ISO 6391!",
+    });
+  } else {
+    if (!LANGUAGE.includes(language)) {
+      errors.push({
+        location: "language",
+        message: `<i>${language}</i> is not identified as per ISO 6391`,
+      });
+    }
+  }
+
+  if (errors.length !== 0) {
+    return res.status(400).json(errors);
+  }
 
   req.body = {
-    "source-countries": country,
+    "source-countries": countries,
     language,
-    author,
-    "news-sources": sources,
+    authors,
   };
   next();
 }

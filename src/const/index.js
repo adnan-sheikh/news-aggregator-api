@@ -1,14 +1,4 @@
-export const MAX_TTL_FOR_ARTICLES = 30 * 1000;
-
-export const NEWS_CATEGORIES = [
-  "business",
-  "entertainment",
-  "general",
-  "health",
-  "science",
-  "sports",
-  "technology",
-];
+export const MAX_TTL_FOR_ARTICLES = 60 * 60 * 1000;
 
 export const COUNTRIES = [
   "ae",
