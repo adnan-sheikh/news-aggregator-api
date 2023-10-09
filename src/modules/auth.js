@@ -2,6 +2,7 @@ import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import config from "../config/index.js";
+import { db } from "../db/index.js";
 
 export function createToken(user) {
   const { id, username } = user;
@@ -25,10 +26,15 @@ export function protectRoute(req, res, next) {
 
   try {
     const user = verifyToken(token);
+    if (typeof user !== "string" && !db.users[user.username]) {
+      throw new Error("You are trying to spoof in. Better luck next time!");
+    }
     req.user = user;
     next();
   } catch (e) {
-    return res.status(401).json({ error: "Invalid token!" });
+    return res
+      .status(401)
+      .json({ error: e?.message ? e.message : "Invalid token!" });
   }
 }
 
