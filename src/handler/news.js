@@ -1,26 +1,7 @@
-import { cache } from "../cache/index.js";
+import { getFromCache, setInCache } from "../cache/index.js";
 import { MAX_TTL_FOR_ARTICLES } from "../const/index.js";
 import { db } from "../db/index.js";
 import { newsAPI } from "../externalAPI/newsAPI.js";
-
-function isArticleInCacheExpired(preferences) {
-  const { data, setTime } = cache.get(preferences);
-  const elapsedTime = Date.now() - setTime;
-  return { isArticleExpired: elapsedTime <= MAX_TTL_FOR_ARTICLES, data };
-}
-
-async function fetchNewsAndUpdateCache(preferences) {
-  try {
-    const news = await newsAPI.get("/top-headlines", {
-      params: preferences,
-    });
-    cache.set(preferences, { data: news.data, setTime: Date.now() });
-    return news.data;
-  } catch (error) {
-    console.error(error);
-    throw new Error("There was an error fetching news on our server.");
-  }
-}
 
 export async function getNews(req, res) {
   const { username } = req.user;
@@ -34,19 +15,27 @@ export async function getNews(req, res) {
   }
 
   try {
-    if (!cache.has(preferences)) {
-      const news = await fetchNewsAndUpdateCache(preferences);
-      return res.json(news);
-    }
-
-    const { data, isArticleExpired } = isArticleInCacheExpired(preferences);
-    if (isArticleExpired) {
-      return res.json(data);
-    }
-
-    const news = await fetchNewsAndUpdateCache(preferences);
+    const news = await getFromCache({
+      key: preferences,
+      maxTTL: MAX_TTL_FOR_ARTICLES,
+    });
     return res.json(news);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (e) {
+    if (e.message.includes("expired") || e.message.includes("not available")) {
+      newsAPI
+        .get("/top-headlines", { params: preferences })
+        .then((news) => {
+          setInCache({ key: preferences, value: news.data });
+          res.json(news.data);
+        })
+        .catch((error) => {
+          console.error(error);
+          res
+            .status(500)
+            .json({
+              error: "There's an error on our server while fetching news!",
+            });
+        });
+    }
   }
 }
