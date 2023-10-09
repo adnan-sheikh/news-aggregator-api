@@ -23,7 +23,7 @@ export async function getNews(req, res) {
   } catch (e) {
     if (e.message.includes("expired") || e.message.includes("not available")) {
       newsAPI
-        .get("/top-headlines", { params: preferences })
+        .get("/search-news", { params: preferences })
         .then((news) => {
           setInCache({ key: preferences, value: news.data });
           res.json(news.data);

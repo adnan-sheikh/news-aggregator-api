@@ -1,7 +1,7 @@
 import { COUNTRIES, NEWS_CATEGORIES } from "../const/index.js";
 import { isEmpty } from "../utils/isEmpty.js";
 
-export function validatePreferences(req, res, next) {
+export function validatePreferences_deprecated(req, res, next) {
   const preferences = req.body;
   const query = preferences?.query;
   const category = preferences?.category;
@@ -26,5 +26,21 @@ export function validatePreferences(req, res, next) {
     return res.status(400).json(errors);
   }
   req.body = { q: query, category, country };
+  next();
+}
+
+export function validatePreferences(req, res, next) {
+  const preferences = req.body;
+  const country = preferences?.country;
+  const language = preferences?.language;
+  const author = preferences?.author;
+  const sources = preferences?.sources;
+
+  req.body = {
+    "source-countries": country,
+    language,
+    author,
+    "news-sources": sources,
+  };
   next();
 }
