@@ -5,7 +5,9 @@ import config from "../config/index.js";
 
 export function createToken(user) {
   const { id, username } = user;
-  const token = jwt.sign({ id, username }, config.secrets.jwt);
+  const token = jwt.sign({ id, username }, config.secrets.jwt, {
+    expiresIn: "0.75d",
+  });
   return token;
 }
 
@@ -15,10 +17,12 @@ export function verifyToken(token) {
 }
 
 export function protectRoute(req, res, next) {
-  const token = req.body.token;
-  if (!token) {
+  const bearer = req.headers.authorization;
+  const [prefix, token] = bearer?.split(" ") ?? [];
+  if (prefix !== "Bearer" || !token) {
     return res.status(401).json({ error: "Unauthorized access!" });
   }
+
   try {
     const user = verifyToken(token);
     req.user = user;

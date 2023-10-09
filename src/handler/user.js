@@ -12,7 +12,9 @@ export function registerUser(req, res) {
   const password = req.body.password;
   const user = db.users[username];
   if (user) {
-    return res.status(400).json({ error: "User already exists" });
+    return res
+      .status(400)
+      .json({ error: "User already exists. Try logging in!" });
   }
   const hash = hashPassword(password);
   const newUser = {
