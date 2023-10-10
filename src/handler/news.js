@@ -63,8 +63,12 @@ export async function getArticle(req, res) {
       newsAPI
         .get("/extract-news", { params: { url: news.url } })
         .then((article) => {
-          setInCache({ key: news.url, value: article.data });
-          res.json(article.data);
+          const articleWithID = { id: news.id, ...article.data };
+          setInCache({
+            key: news.url,
+            value: articleWithID,
+          });
+          res.json(articleWithID);
         })
         .catch((error) => {
           console.error(error);
@@ -94,4 +98,48 @@ export async function markArticleAsFavorite(req, res) {
   const favoriteNews = { ...news, favorite: true };
   db.users[username].news[articleID] = favoriteNews;
   res.json(favoriteNews);
+}
+
+export async function getAllReadArticles(req, res) {
+  const username = req.user.username;
+  const news = Object.values(db.users[username].news);
+
+  try {
+    const allReadArticles = await Promise.all(
+      news
+        .filter((article) => article.read)
+        .map((article) => {
+          const newsFromCache = getFromCache({
+            key: article.url,
+          });
+          return newsFromCache;
+        })
+    );
+    return res.json(allReadArticles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch all read articles!" });
+  }
+}
+
+export async function getAllFavoriteArticles(req, res) {
+  const username = req.user.username;
+  const news = Object.values(db.users[username].news);
+
+  try {
+    const allFavoriteArticles = await Promise.all(
+      news
+        .filter((article) => article.favorite)
+        .map((article) => {
+          const newsFromCache = getFromCache({
+            key: article.url,
+          });
+          return newsFromCache;
+        })
+    );
+    return res.json(allFavoriteArticles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch all favorite articles!" });
+  }
 }
