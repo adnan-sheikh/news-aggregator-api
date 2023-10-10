@@ -52,9 +52,9 @@ export async function getArticle(req, res) {
   const { username } = req.user;
   const userFromDB = db.users[username];
 
-  const newsURL = userFromDB.news[newsID];
+  const news = userFromDB.news[newsID];
 
-  if (!newsURL) {
+  if (!news) {
     return res.status(404).json({
       error: "No such article found. Please provide a valid article ID!",
     });
@@ -62,7 +62,7 @@ export async function getArticle(req, res) {
 
   const article = await newsAPI.get("/extract-news", {
     params: {
-      url: newsURL,
+      url: news.url,
     },
   });
   res.json(article.data);
