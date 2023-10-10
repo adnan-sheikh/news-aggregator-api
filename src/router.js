@@ -23,9 +23,10 @@ router.post("/preferences", validatePreferences, createOrUpdatePreferences);
 router.get("/preferences", getPreferences);
 router.put("/preferences", validatePreferences, createOrUpdatePreferences);
 
-router.get("/news", getNews);
+router.get("/news", getNews());
 router.get("/news/read", getAllReadArticles);
 router.get("/news/favorite", getAllFavoriteArticles);
+router.get("/news/search/:keyword", getNews({ basedOnQuery: true }));
 router.get("/news/:id", validateNewsArticle, getArticle);
 router.post("/news/:id/read", validateNewsArticle, markArticleAsRead);
 router.post("/news/:id/favorite", validateNewsArticle, markArticleAsFavorite);
