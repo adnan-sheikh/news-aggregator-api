@@ -11,5 +11,5 @@ export function createOrUpdatePreferences(req, res) {
   const userFromDB = db.users[username];
   const preferences = req.body;
   db.users[username] = { ...userFromDB, preferences };
-  res.json(preferences);
+  res.status(201).json(preferences);
 }
