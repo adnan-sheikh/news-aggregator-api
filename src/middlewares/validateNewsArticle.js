@@ -7,13 +7,12 @@ export function validateNewsArticle(req, res, next) {
 
   const news = userFromDB.news?.[newsID];
 
-  if (!news) {
+  if (!news || (news && !news.url)) {
     return res.status(404).json({
       error: "No such article found. Please provide a valid article ID!",
     });
   }
 
   req.news = news;
-  req.userFromDB = userFromDB;
   next();
 }

@@ -82,17 +82,9 @@ export async function markArticleAsRead(req, res) {
   const articleID = req.params.id;
   const news = req.news;
   const username = req.user.username;
-  const userFromDB = req.userFromDB;
 
   const readNews = { ...news, read: true };
-  db.users[username] = {
-    ...userFromDB,
-    news: {
-      ...userFromDB.news,
-      [articleID]: readNews,
-    },
-  };
-
+  db.users[username].news[articleID] = readNews;
   res.json(readNews);
 }
 
@@ -100,16 +92,8 @@ export async function markArticleAsFavorite(req, res) {
   const articleID = req.params.id;
   const news = req.news;
   const username = req.user.username;
-  const userFromDB = req.userFromDB;
 
-  const readNews = { ...news, favorite: true };
-  db.users[username] = {
-    ...userFromDB,
-    news: {
-      ...userFromDB.news,
-      [articleID]: readNews,
-    },
-  };
-
-  res.json(readNews);
+  const favoriteNews = { ...news, favorite: true };
+  db.users[username].news[articleID] = favoriteNews;
+  res.json(favoriteNews);
 }
