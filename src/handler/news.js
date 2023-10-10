@@ -52,7 +52,7 @@ export async function getArticle(req, res) {
   const { username } = req.user;
   const userFromDB = db.users[username];
 
-  const news = userFromDB.news[newsID];
+  const news = userFromDB.news?.[newsID];
 
   if (!news) {
     return res.status(404).json({
@@ -60,10 +60,25 @@ export async function getArticle(req, res) {
     });
   }
 
-  const article = await newsAPI.get("/extract-news", {
-    params: {
-      url: news.url,
-    },
-  });
-  res.json(article.data);
+  try {
+    const newsFromCache = await getFromCache({
+      key: news.url,
+    });
+    return res.json(newsFromCache);
+  } catch (e) {
+    if (e.message.includes("expired") || e.message.includes("not available")) {
+      newsAPI
+        .get("/extract-news", { params: { url: news.url } })
+        .then((article) => {
+          setInCache({ key: news.url, value: article.data });
+          res.json(article.data);
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).json({
+            error: "There's an error on our server while fetching news!",
+          });
+        });
+    }
+  }
 }
