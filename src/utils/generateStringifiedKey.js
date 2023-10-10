@@ -1,5 +1,6 @@
 /**
  *
+ * @param {null | undefined | string | number | object} key
  * Expects only Objects, Strings or Numbers as arguments
  * @returns If input is a string or number, returns same key. If input is an Object, returns stringified object for consistency
  */

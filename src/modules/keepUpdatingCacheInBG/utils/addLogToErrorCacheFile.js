@@ -11,6 +11,6 @@ export function addLogToErrorCacheFile(e) {
   const errorTime = getHumanReadableDateString(now);
   fs.appendFile(
     path.resolve("src", "cache", "cache.error.log"),
-    `${errorTime}: Error updating cache. Reason: ${e.message}`
+    `${errorTime}: Error updating cache.\nReason: ${e.message}\n\n`
   );
 }

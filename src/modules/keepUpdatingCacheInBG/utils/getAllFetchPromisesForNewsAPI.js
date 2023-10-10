@@ -11,9 +11,8 @@ export function getAllFetchPromisesForNewsAPI(paramsArr) {
         key,
         value: res.data,
       }))
-      .catch(() => {
-        console.log("-----------------caught")
-        throw new Error("Error fetching news on our server!");
+      .catch((e) => {
+        throw e;
       });
   });
 }

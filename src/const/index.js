@@ -1,4 +1,4 @@
-export const MAX_TIME_FOR_CACHE_UPDATE = 5 * 1000;
+export const MAX_TIME_FOR_CACHE_UPDATE = 10 * 60 * 60 * 1000;
 export const MAX_TTL_FOR_ARTICLES = 1 * 60 * 60 * 1000;
 
 export const COUNTRIES = [
