@@ -64,19 +64,20 @@ export function getNews({ basedOnQuery = false } = {}) {
 export async function getArticle(req, res) {
   const news = req.news;
 
+  const fetchParams = { url: news.url };
   try {
     const newsFromCache = await getFromCache({
-      key: news.url,
+      key: fetchParams,
     });
     return res.json(newsFromCache);
   } catch (e) {
     if (e.message.includes("expired") || e.message.includes("not available")) {
       newsAPI
-        .get("/extract-news", { params: { url: news.url } })
+        .get("/extract-news", { params: fetchParams })
         .then((article) => {
           const articleWithID = { id: news.id, ...article.data };
           setInCache({
-            key: news.url,
+            key: fetchParams,
             value: articleWithID,
           });
           res.json(articleWithID);
