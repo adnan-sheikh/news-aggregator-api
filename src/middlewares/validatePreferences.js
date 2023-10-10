@@ -1,5 +1,5 @@
 import { COUNTRIES, LANGUAGE } from "../const/index.js";
-import { isEmpty } from "../utils/isEmpty.js";
+import { isEmpty } from "../utils/index.js";
 
 export function validatePreferences(req, res, next) {
   const preferences = req.body;

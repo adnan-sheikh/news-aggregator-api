@@ -27,17 +27,15 @@ export async function getNews(req, res) {
         .then((news) => {
           setInCache({ key: preferences, value: news.data });
           news.data.news.forEach((article) => {
-            db.users[username] = {
-              ...userFromDB,
-              news: {
-                ...db.users[username].news,
-                [article.id]: {
-                  id: article.id,
-                  url: article.url,
-                  read: false,
-                  favorite: false,
-                },
-              },
+            const articleDetails = {
+              id: article.id,
+              url: article.url,
+              read: false,
+              favorite: false,
+            };
+            db.users[username].news = {
+              ...db.users[username].news,
+              [article.id]: articleDetails,
             };
           });
           res.json(news.data);

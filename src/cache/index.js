@@ -1,3 +1,5 @@
+import { generateStringifiedKey } from "../utils/index.js";
+
 export const cache = new Map();
 
 function checkIfKeyExpired({ key, maxTTL }) {
@@ -12,12 +14,15 @@ function checkIfKeyExpired({ key, maxTTL }) {
  */
 export function getFromCache({ key, maxTTL = null }) {
   return new Promise((res, rej) => {
-    if (cache.has(key)) {
-      const isKeyExpired = maxTTL ? checkIfKeyExpired({ key, maxTTL }) : false;
+    const preparedKey = generateStringifiedKey(key);
+    if (cache.has(preparedKey)) {
+      const isKeyExpired = maxTTL
+        ? checkIfKeyExpired({ key: preparedKey, maxTTL })
+        : false;
       if (isKeyExpired) {
         return rej(new Error("Key has expired!"));
       }
-      return res(cache.get(key).data);
+      return res(cache.get(preparedKey).data);
     } else {
       return rej(new Error("Key is not available in cache!"));
     }
@@ -25,5 +30,6 @@ export function getFromCache({ key, maxTTL = null }) {
 }
 
 export function setInCache({ key, value }) {
-  cache.set(key, { data: value, setTime: Date.now() });
+  const preparedKey = generateStringifiedKey(key);
+  cache.set(preparedKey, { data: value, setTime: Date.now() });
 }
