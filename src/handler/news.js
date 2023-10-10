@@ -31,7 +31,12 @@ export async function getNews(req, res) {
               ...userFromDB,
               news: {
                 ...db.users[username].news,
-                [article.id]: { url: article.url, read: false },
+                [article.id]: {
+                  id: article.id,
+                  url: article.url,
+                  read: false,
+                  favorite: false,
+                },
               },
             };
           });
@@ -48,17 +53,7 @@ export async function getNews(req, res) {
 }
 
 export async function getArticle(req, res) {
-  const newsID = req.params.id;
-  const { username } = req.user;
-  const userFromDB = db.users[username];
-
-  const news = userFromDB.news?.[newsID];
-
-  if (!news) {
-    return res.status(404).json({
-      error: "No such article found. Please provide a valid article ID!",
-    });
-  }
+  const news = req.news;
 
   try {
     const newsFromCache = await getFromCache({
@@ -81,4 +76,40 @@ export async function getArticle(req, res) {
         });
     }
   }
+}
+
+export async function markArticleAsRead(req, res) {
+  const articleID = req.params.id;
+  const news = req.news;
+  const username = req.user.username;
+  const userFromDB = req.userFromDB;
+
+  const readNews = { ...news, read: true };
+  db.users[username] = {
+    ...userFromDB,
+    news: {
+      ...userFromDB.news,
+      [articleID]: readNews,
+    },
+  };
+
+  res.json(readNews);
+}
+
+export async function markArticleAsFavorite(req, res) {
+  const articleID = req.params.id;
+  const news = req.news;
+  const username = req.user.username;
+  const userFromDB = req.userFromDB;
+
+  const readNews = { ...news, favorite: true };
+  db.users[username] = {
+    ...userFromDB,
+    news: {
+      ...userFromDB.news,
+      [articleID]: readNews,
+    },
+  };
+
+  res.json(readNews);
 }

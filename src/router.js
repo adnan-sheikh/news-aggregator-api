@@ -3,9 +3,17 @@ import {
   createOrUpdatePreferences,
   getPreferences,
 } from "./handler/preferences.js";
-import { validatePreferences } from "./middlewares/validatePreferences.js";
 import { db } from "./db/index.js";
-import { getArticle, getNews } from "./handler/news.js";
+import {
+  getArticle,
+  getNews,
+  markArticleAsFavorite,
+  markArticleAsRead,
+} from "./handler/news.js";
+import {
+  validateNewsArticle,
+  validatePreferences,
+} from "./middlewares/index.js";
 
 export const router = express.Router();
 
@@ -14,7 +22,9 @@ router.get("/preferences", getPreferences);
 router.put("/preferences", validatePreferences, createOrUpdatePreferences);
 
 router.get("/news", getNews);
-router.get("/news/:id", getArticle);
+router.get("/news/:id", validateNewsArticle, getArticle);
+router.post("/news/:id/read", validateNewsArticle, markArticleAsRead);
+router.post("/news/:id/favorite", validateNewsArticle, markArticleAsFavorite);
 
 router.get("/users", (req, res) => {
   // @ts-ignore
