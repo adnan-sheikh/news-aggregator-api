@@ -26,6 +26,15 @@ export async function getNews(req, res) {
         .get("/search-news", { params: preferences })
         .then((news) => {
           setInCache({ key: preferences, value: news.data });
+          news.data.news.forEach((article) => {
+            db.users[username] = {
+              ...userFromDB,
+              news: {
+                ...db.users[username].news,
+                [article.id]: { url: article.url, read: false },
+              },
+            };
+          });
           res.json(news.data);
         })
         .catch((error) => {
@@ -36,4 +45,25 @@ export async function getNews(req, res) {
         });
     }
   }
+}
+
+export async function getArticle(req, res) {
+  const newsID = req.params.id;
+  const { username } = req.user;
+  const userFromDB = db.users[username];
+
+  const newsURL = userFromDB.news[newsID];
+
+  if (!newsURL) {
+    return res.status(404).json({
+      error: "No such article found. Please provide a valid article ID!",
+    });
+  }
+
+  const article = await newsAPI.get("/extract-news", {
+    params: {
+      url: newsURL,
+    },
+  });
+  res.json(article.data);
 }
