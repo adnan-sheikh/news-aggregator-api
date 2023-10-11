@@ -176,7 +176,7 @@ Error responses to the client are sent in the form of:
 
 ```json
 {
-  "error": "Something went wront"
+  "error": "Something went wrong"
 }
 ```
 
