@@ -2,6 +2,7 @@ import { getFromCache, setInCache } from "../cache/index.js";
 import { MAX_TTL_FOR_ARTICLES } from "../const/index.js";
 import { db } from "../db/index.js";
 import { newsAPI } from "../modules/newsAPI.js";
+import { logErrors } from "../utils/logErrors.js";
 
 export function getNews({ basedOnQuery = false } = {}) {
   return async function (req, res) {
@@ -51,7 +52,11 @@ export function getNews({ basedOnQuery = false } = {}) {
             res.json(news.data);
           })
           .catch((error) => {
-            console.error(error);
+            logErrors(error, {
+              url: "/search-news",
+              params: fetchParams,
+              method: "get",
+            });
             res.status(500).json({
               error: "There's an error on our server while fetching news!",
             });
@@ -83,7 +88,11 @@ export async function getArticle(req, res) {
           res.json(articleWithID);
         })
         .catch((error) => {
-          console.error(error);
+          logErrors(error, {
+            method: "get",
+            params: fetchParams,
+            url: "/extract-news",
+          });
           res.status(500).json({
             error: "There's an error on our server while fetching news!",
           });
@@ -121,15 +130,16 @@ export async function getAllReadArticles(req, res) {
       news
         .filter((article) => article.read)
         .map((article) => {
+          const fetchParams = { url: article.url };
           const newsFromCache = getFromCache({
-            key: article.url,
+            key: fetchParams,
           });
           return newsFromCache;
         })
     );
     return res.json(allReadArticles);
   } catch (error) {
-    console.error(error);
+    logErrors(error);
     res.status(500).json({ error: "Failed to fetch all read articles!" });
   }
 }
@@ -143,15 +153,16 @@ export async function getAllFavoriteArticles(req, res) {
       news
         .filter((article) => article.favorite)
         .map((article) => {
+          const fetchParams = { url: article.url };
           const newsFromCache = getFromCache({
-            key: article.url,
+            key: fetchParams,
           });
           return newsFromCache;
         })
     );
     return res.json(allFavoriteArticles);
   } catch (error) {
-    console.error(error);
+    logErrors(error);
     res.status(500).json({ error: "Failed to fetch all favorite articles!" });
   }
 }
