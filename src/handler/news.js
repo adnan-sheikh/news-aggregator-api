@@ -2,7 +2,7 @@ import { getFromCache, setInCache } from "../cache/index.js";
 import { MAX_TTL_FOR_ARTICLES } from "../const/index.js";
 import { db } from "../db/index.js";
 import { newsAPI } from "../modules/newsAPI.js";
-import { logErrors } from "../utils/logErrors.js";
+import { logErrors } from "../utils/index.js";
 
 export function getNews({ basedOnQuery = false } = {}) {
   return async function (req, res) {
