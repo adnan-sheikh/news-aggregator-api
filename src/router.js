@@ -3,7 +3,6 @@ import {
   createOrUpdatePreferences,
   getPreferences,
 } from "./handler/preferences.js";
-import { db } from "./db/index.js";
 import {
   getAllFavoriteArticles,
   getAllReadArticles,
@@ -30,8 +29,3 @@ router.get("/news/search/:keyword", getNews({ basedOnQuery: true }));
 router.get("/news/:id", validateNewsArticle, getArticle);
 router.post("/news/:id/read", validateNewsArticle, markArticleAsRead);
 router.post("/news/:id/favorite", validateNewsArticle, markArticleAsFavorite);
-
-router.get("/users", (req, res) => {
-  // @ts-ignore
-  return res.send(db.users[req.user.username]);
-});
